@@ -1,40 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'dart:ui';
 
-class ClutchButton extends StatefulWidget {
-  const ClutchButton({super.key});
+import 'package:flame/components.dart';
+import 'package:flame/events.dart';
+import 'package:flame/extensions.dart';
+
+class ClutchButton extends PositionComponent with TapCallbacks {
+  bool isTapping = false;
 
   @override
-  _ClutchButtonState createState() => _ClutchButtonState();
-}
-
-class _ClutchButtonState extends State<ClutchButton> {
-  bool _isClutchPressed = false;
-
-  void _handleLongPressStart(LongPressStartDetails details) {
-    setState(() {
-      _isClutchPressed = true;
-    });
-  }
-
-  void _handleLongPressEnd(LongPressEndDetails details) {
-    setState(() {
-      _isClutchPressed = false;
-    });
+  void render(Canvas canvas) {
+    final paint = Paint()
+      ..color = isTapping ? const Color(0xFFFF0000) : const Color(0xFF00FF00);
+    canvas.drawRect(size.toRect(), paint);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPressStart: _handleLongPressStart,
-      onLongPressEnd: _handleLongPressEnd,
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
-        color: _isClutchPressed ? Colors.red : Colors.blue,
-        child: const Text(
-          'Long Press Me',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
+  void onTapDown(TapDownEvent event) {
+    isTapping = true;
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    isTapping = false;
   }
 }

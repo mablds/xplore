@@ -1,66 +1,64 @@
-import 'dart:developer';
-
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
-import 'package:flame/src/components/core/component.dart';
 import 'package:flutter/material.dart';
 import 'package:xplore/hud/circlepad.dart';
 import 'package:xplore/hud/clutch.dart';
 
-import 'entities/spaceship.dart';
+import 'player/entities/spaceship.dart';
 
 void main() {
   runApp(GameWidget(game: Xplore()));
 }
 
 class Xplore extends FlameGame with PanDetector {
-  final CirclePad circlePad = CirclePad();
-
+  late DirectionalPad directionalPad;
   late Spaceship spaceship;
+  late ClutchButton clutchButton;
 
   @override
   Future<void> onLoad() async {
+    directionalPad = DirectionalPad();
+    clutchButton = ClutchButton();
+    spaceship = Spaceship(clutch: clutchButton);
+
+    add(spaceship..position = size / 2);
+    add(clutchButton
+      ..position = Vector2(size.x - 100, size.y - 100)
+      ..size = Vector2.all(50));
+
     await super.onLoad();
-
-    spaceship = Spaceship();
-
-    //TODO fix clutch button
-    add(const ClutchButton() as Component);
-
-    add(spaceship);
   }
 
   @override
   void render(Canvas canvas) {
-    circlePad.renderCirclePad(canvas);
+    directionalPad.renderDirectionalPad(canvas);
     super.render(canvas);
   }
 
   @override
   void onPanStart(DragStartInfo info) {
-    circlePad.pointerStartLocation = info.eventPosition.global;
+    directionalPad.pointerStartLocation = info.eventPosition.global;
   }
 
   @override
   void onPanUpdate(DragUpdateInfo info) {
-    circlePad.setPointerCurrentLocation(info.eventPosition.global);
+    directionalPad.setPointerCurrentLocation(info.eventPosition.global);
 
-    final delta =
-        circlePad.pointerCurrentLocation - circlePad.pointerStartLocation;
+    final delta = directionalPad.pointerCurrentLocation -
+        directionalPad.pointerStartLocation;
 
     spaceship.setMoveDirection(delta);
   }
 
   @override
   void onPanEnd(DragEndInfo info) {
-    circlePad.reset();
+    directionalPad.reset();
     spaceship.turnOff();
   }
 
   @override
   void onPanCancel() {
-    circlePad.reset();
+    directionalPad.reset();
     spaceship.turnOff();
   }
 }

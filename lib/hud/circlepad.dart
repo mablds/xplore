@@ -1,8 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
-class CirclePad {
-  CirclePad({
+class DirectionalPad {
+  DirectionalPad({
     Vector2? pointerCurrentLocation,
     Vector2? pointerStartLocation,
   })  : pointerCurrentLocation = pointerCurrentLocation ?? Vector2.zero(),
@@ -14,7 +14,7 @@ class CirclePad {
   void drawLateralRectangle(Canvas canvas) {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCircle(center: pointerStartLocation.toOffset(), radius: 30),
+        Rect.fromCircle(center: pointerStartLocation.toOffset(), radius: 20),
         const Radius.circular(10),
       ),
       Paint()..color = Colors.grey.withAlpha(100),
@@ -25,9 +25,9 @@ class CirclePad {
     var delta =
         pointerCurrentLocation.toOffset() - pointerStartLocation.toOffset();
 
-    if (delta.distance > 30) {
+    if (delta.distance > 20) {
       delta = pointerStartLocation.toOffset() +
-          (Vector2(delta.dx, delta.dy).normalized() * 30).toOffset();
+          (Vector2(delta.dx, delta.dy).normalized() * 20).toOffset();
     } else {
       delta = pointerCurrentLocation.toOffset();
     }
@@ -36,17 +36,18 @@ class CirclePad {
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: delta, width: 40, height: 40),
+        Rect.fromCenter(center: delta, width: 35, height: 35),
         const Radius.circular(10),
       ),
       Paint()..color = Colors.white.withAlpha(100),
     );
   }
 
-  void renderCirclePad(Canvas canvas) {
+  void renderDirectionalPad(Canvas canvas) {
     if (pointerStartLocation != Vector2.zero()) drawLateralRectangle(canvas);
-    if (pointerCurrentLocation != Vector2.zero())
+    if (pointerCurrentLocation != Vector2.zero()) {
       drawInnerLateralRectangle(canvas);
+    }
   }
 
   void setPointerStartLocation(Vector2 newLocation) =>
