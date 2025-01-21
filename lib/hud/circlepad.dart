@@ -14,13 +14,10 @@ class CirclePad {
   void drawLateralRectangle(Canvas canvas) {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCircle(center: pointerStartLocation.toOffset(), radius: 20),
+        Rect.fromCircle(center: pointerStartLocation.toOffset(), radius: 30),
         const Radius.circular(10),
       ),
       Paint()..color = Colors.grey.withAlpha(100),
-      // pointerStartLocation.toOffset(),
-      // 50,
-      // Paint()..color = Colors.grey.withAlpha(100),
     );
   }
 
@@ -28,16 +25,20 @@ class CirclePad {
     var delta =
         pointerCurrentLocation.toOffset() - pointerStartLocation.toOffset();
 
-    if (delta.distance > 50) {
+    if (delta.distance > 30) {
       delta = pointerStartLocation.toOffset() +
-          (Vector2(delta.dx, delta.dy).normalized() * 50).toOffset();
+          (Vector2(delta.dx, delta.dy).normalized() * 30).toOffset();
     } else {
       delta = pointerCurrentLocation.toOffset();
     }
 
-    canvas.drawCircle(
-      delta,
-      20,
+    delta = Offset(delta.dx, pointerStartLocation.toOffset().dy);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: delta, width: 40, height: 40),
+        const Radius.circular(10),
+      ),
       Paint()..color = Colors.white.withAlpha(100),
     );
   }

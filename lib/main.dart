@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/src/components/core/component.dart';
 import 'package:flutter/material.dart';
-import 'package:xplore/circlepad/circlepad.dart';
+import 'package:xplore/hud/circlepad.dart';
+import 'package:xplore/hud/clutch.dart';
 
 import 'entities/spaceship.dart';
 
@@ -14,12 +16,17 @@ void main() {
 
 class Xplore extends FlameGame with PanDetector {
   final CirclePad circlePad = CirclePad();
+
   late Spaceship spaceship;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
     spaceship = Spaceship();
+
+    //TODO fix clutch button
+    add(const ClutchButton() as Component);
 
     add(spaceship);
   }
