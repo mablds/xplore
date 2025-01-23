@@ -2,14 +2,20 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:xplore/hud/clutch.dart';
+import 'package:xplore/hud/direction_pad.dart';
 import 'package:xplore/player/utils/movement.dart';
 
 class Spaceship extends SpriteComponent {
   Spaceship({
     required this.clutch,
+    required this.left,
+    required this.right,
   });
 
   final ClutchButton clutch;
+  final LeftDirectionButton left;
+  final RightDirectionButton right;
+
   final double rotateSpeed = 1.0;
   final double acceleration = 100.0;
   final Vector2 moveDirection = Vector2.zero();
@@ -29,8 +35,8 @@ class Spaceship extends SpriteComponent {
   }
 
   void move(double dt) {
-    if (MovementUtils.isRotatingRight(moveDirection)) rotateRight(dt);
-    if (MovementUtils.isRotatingLeft(moveDirection)) rotateLeft(dt);
+    if (MovementUtils.isRotatingLeft(left.isTapping)) rotateLeft(dt);
+    if (MovementUtils.isRotatingRight(right.isTapping)) rotateRight(dt);
     if (MovementUtils.isClutching(clutch.isTapping)) impulse(dt);
     // if (MovementUtils.isStationary(clutch.isTapping)
     // position += _moveDirection.normalized() * 100 * dt;
