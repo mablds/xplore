@@ -1,11 +1,14 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flame/components.dart';
 import 'package:xplore/hud/clutch.dart';
 import 'package:xplore/hud/direction_pad.dart';
 import 'package:xplore/player/utils/movement.dart';
 
-class Spaceship extends SpriteComponent {
+import '../utils/direction.dart';
+import '../utils/effects.dart';
+
+class Spaceship extends SpriteComponent with HasGameRef {
   Spaceship({
     required this.clutch,
     required this.left,
@@ -17,8 +20,8 @@ class Spaceship extends SpriteComponent {
   final RightDirectionButton right;
 
   final double rotateSpeed = 1.0;
-  final double acceleration = 100.0;
   final Vector2 moveDirection = Vector2.zero();
+  double acceleration = 0;
 
   @override
   Future<void> onLoad() async {
@@ -37,15 +40,31 @@ class Spaceship extends SpriteComponent {
   void move(double dt) {
     if (MovementUtils.isRotatingLeft(left.isTapping)) rotateLeft(dt);
     if (MovementUtils.isRotatingRight(right.isTapping)) rotateRight(dt);
-    if (MovementUtils.isClutching(clutch.isTapping)) impulse(dt);
-    // if (MovementUtils.isStationary(clutch.isTapping)
-    // position += _moveDirection.normalized() * 100 * dt;
+    if (MovementUtils.isClutching(clutch.isTapping)) {
+      impulse(dt);
+      add(EffectsUtils.getRocketEffect(position.clone()));
+    }
+
+    decreaseSpeed(dt);
   }
 
   void impulse(double dt) {
-    // final direction = Vector2(cos(angle), sin(angle));
-    final direction = Vector2(cos(angle - pi / 2), sin(angle - pi / 2));
-    position += direction * acceleration * dt;
+    if (acceleration == 0) acceleration = 1;
+    if (acceleration > 0 && acceleration < 95) acceleration += 0.5;
+    if (acceleration >= 95) acceleration = 100;
+
+    add(EffectsUtils.getRocketEffect(position.clone()));
+
+    log('cai aqui');
+    position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
+  }
+
+  void decreaseSpeed(double dt) {
+    if (acceleration > 1) acceleration -= 0.05;
+    if (acceleration > 0) acceleration -= 0.02;
+    if (acceleration < 0) acceleration = 0;
+
+    position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
   }
 
   void setMoveDirection(Vector2 newDirection) =>
@@ -53,7 +72,7 @@ class Spaceship extends SpriteComponent {
 
   void rotateLeft(double dt) => setAngle(angle - (rotateSpeed * dt));
   void rotateRight(double dt) => setAngle(angle + (rotateSpeed * dt));
-  void setAngle(double newAngle) => angle = newAngle;
 
+  void setAngle(double newAngle) => angle = newAngle;
   void turnOff() => setMoveDirection(Vector2.zero());
 }

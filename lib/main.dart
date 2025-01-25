@@ -1,10 +1,17 @@
+import 'dart:math';
+
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
 import 'package:xplore/hud/direction_pad.dart';
 import 'package:xplore/hud/clutch.dart';
+import 'package:xplore/utils/positions.dart';
 
 import 'player/entities/spaceship.dart';
+import 'player/utils/effects.dart';
+import 'utils/sizes.dart';
 
 void main() {
   runApp(GameWidget(game: Xplore()));
@@ -25,28 +32,18 @@ class Xplore extends FlameGame with PanDetector {
       right: directionalPad.rightDirectionalButton,
     );
 
-    add(spaceship..position = size / 2);
-    add(
-      directionalPad.leftDirectionalButton
-        ..position = Vector2(50, size.y - 100)
-        ..size = Vector2.all(50),
-    );
-    add(
-      directionalPad.rightDirectionalButton
-        ..position = Vector2(150, size.y - 100)
-        ..size = Vector2.all(50),
-    );
-    add(
-      clutchButton
-        ..position = Vector2(size.x - 100, size.y - 100)
-        ..size = Vector2.all(50),
-    );
+    add(spaceship..position = PositionsUtils.spaceshipInitialPosition(size));
+
+    add(directionalPad.leftDirectionalButton
+      ..position = PositionsUtils.leftDirectionalPadPosition(size)
+      ..size = SizesUtils.directionalPadButtonsSize);
+    add(directionalPad.rightDirectionalButton
+      ..position = PositionsUtils.rightDirectionalPadPosition(size)
+      ..size = SizesUtils.directionalPadButtonsSize);
+    add(clutchButton
+      ..position = PositionsUtils.clutchButtonPosition(size)
+      ..size = SizesUtils.clutchButtonSize);
 
     await super.onLoad();
-  }
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
   }
 }

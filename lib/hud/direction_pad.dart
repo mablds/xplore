@@ -40,13 +40,12 @@ class RightDirectionButton extends PositionComponent with TapCallbacks {
   bool isTapping = false;
 
   @override
-  void render(Canvas canvas) {
-    final paint = Paint()
-      ..color = isTapping
-          ? const Color(0xFF00FF00)
-          : const Color.fromARGB(255, 134, 132, 132);
-    canvas.drawRect(size.toRect(), paint);
-  }
+  void render(Canvas canvas) => canvas.drawRect(
+      size.toRect(),
+      Paint()
+        ..color = isTapping
+            ? const Color(0xFF00FF00)
+            : const Color.fromARGB(255, 134, 132, 132));
 
   @override
   void onTapDown(TapDownEvent event) => isTapping = true;
