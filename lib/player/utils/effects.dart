@@ -1,22 +1,30 @@
+import 'dart:developer';
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
 
 class EffectsUtils {
-  static ParticleSystemComponent getRocketEffect(Vector2 position) =>
-      ParticleSystemComponent(
-        particle: Particle.generate(
-          count: 100,
-          lifespan: 10,
-          generator: (i) => AcceleratedParticle(
-            acceleration: position * 2,
-            speed: Vector2.random() * 200,
-            position: position,
-            child: CircleParticle(
-              radius: 5,
-              paint: Paint()..color = Colors.red,
-            ),
+  static Vector2 getRandomVector() =>
+      (Vector2.random(Random()) - Vector2(0.5, -1)) * 500;
+
+  static ParticleSystemComponent getRocketEffect(Vector2 position) {
+    return ParticleSystemComponent(
+      size: Vector2.all(20),
+      particle: Particle.generate(
+        count: 10,
+        lifespan: 0.1,
+        generator: (_) => AcceleratedParticle(
+          position: position.clone() / 14.5,
+          acceleration: getRandomVector(),
+          speed: getRandomVector() / 2,
+          child: CircleParticle(
+            radius: 1.0,
+            paint: Paint()..color = Colors.red,
           ),
         ),
-      );
+      ),
+    );
+  }
 }

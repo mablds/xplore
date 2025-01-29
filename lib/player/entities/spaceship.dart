@@ -1,6 +1,10 @@
 import 'dart:developer';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/particles.dart';
+import 'package:flutter/material.dart';
 import 'package:xplore/hud/clutch.dart';
 import 'package:xplore/hud/direction_pad.dart';
 import 'package:xplore/player/utils/movement.dart';
@@ -40,10 +44,7 @@ class Spaceship extends SpriteComponent with HasGameRef {
   void move(double dt) {
     if (MovementUtils.isRotatingLeft(left.isTapping)) rotateLeft(dt);
     if (MovementUtils.isRotatingRight(right.isTapping)) rotateRight(dt);
-    if (MovementUtils.isClutching(clutch.isTapping)) {
-      impulse(dt);
-      add(EffectsUtils.getRocketEffect(position.clone()));
-    }
+    if (MovementUtils.isClutching(clutch.isTapping)) impulse(dt);
 
     decreaseSpeed(dt);
   }
@@ -55,13 +56,12 @@ class Spaceship extends SpriteComponent with HasGameRef {
 
     add(EffectsUtils.getRocketEffect(position.clone()));
 
-    log('cai aqui');
     position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
   }
 
   void decreaseSpeed(double dt) {
-    if (acceleration > 1) acceleration -= 0.05;
-    if (acceleration > 0) acceleration -= 0.02;
+    if (acceleration > 1) acceleration -= 0.06;
+    if (acceleration > 0 && acceleration < 1) acceleration -= 0.03;
     if (acceleration < 0) acceleration = 0;
 
     position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
