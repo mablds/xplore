@@ -31,7 +31,6 @@ class Spaceship extends SpriteComponent with HasGameRef {
   Future<void> onLoad() async {
     sprite = await Sprite.load('ship.png');
     size = Vector2.all(30);
-    position = center;
   }
 
   @override

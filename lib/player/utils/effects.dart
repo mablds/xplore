@@ -10,18 +10,21 @@ class EffectsUtils {
       (Vector2.random(Random()) - Vector2(0.5, -1)) * 500;
 
   static ParticleSystemComponent getRocketEffect(Vector2 position) {
+    final spaceshipPosition = position.clone();
+
     return ParticleSystemComponent(
-      size: Vector2.all(20),
+      size: Vector2.all(10),
       particle: Particle.generate(
-        count: 10,
+        count: 3,
         lifespan: 0.1,
         generator: (_) => AcceleratedParticle(
-          position: position.clone() / 14.5,
+          position: spaceshipPosition.clone() -
+              Vector2(spaceshipPosition.x - 15, spaceshipPosition.y - 20),
           acceleration: getRandomVector(),
-          speed: getRandomVector() / 2,
+          speed: getRandomVector() / 3,
           child: CircleParticle(
             radius: 1.0,
-            paint: Paint()..color = Colors.red,
+            paint: Paint()..color = const Color.fromARGB(255, 247, 220, 137),
           ),
         ),
       ),
