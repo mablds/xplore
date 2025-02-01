@@ -1,27 +1,17 @@
-import 'dart:developer';
-import 'dart:math';
-import 'dart:ui';
-
 import 'package:flame/components.dart';
-import 'package:flame/particles.dart';
-import 'package:flutter/material.dart';
-import 'package:xplore/hud/clutch.dart';
-import 'package:xplore/hud/direction_pad.dart';
+import 'package:xplore/main.dart';
 import 'package:xplore/player/utils/movement.dart';
 
+import '../../hud/hud.dart';
 import '../utils/direction.dart';
-import '../utils/effects.dart';
+import 'effects.dart';
 
-class Spaceship extends SpriteComponent with HasGameRef {
+class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
   Spaceship({
-    required this.clutch,
-    required this.left,
-    required this.right,
+    required this.hud,
   });
 
-  final ClutchButton clutch;
-  final LeftDirectionButton left;
-  final RightDirectionButton right;
+  final Hud hud;
 
   final double rotateSpeed = 1.0;
   final Vector2 moveDirection = Vector2.zero();
@@ -41,9 +31,15 @@ class Spaceship extends SpriteComponent with HasGameRef {
   }
 
   void move(double dt) {
-    if (MovementUtils.isRotatingLeft(left.isTapping)) rotateLeft(dt);
-    if (MovementUtils.isRotatingRight(right.isTapping)) rotateRight(dt);
-    if (MovementUtils.isClutching(clutch.isTapping)) impulse(dt);
+    if (MovementUtils.isRotatingLeft(hud.leftDirectionalButton.isTapping)) {
+      rotateLeft(dt);
+    }
+
+    if (MovementUtils.isRotatingRight(hud.rightDirectionalButton.isTapping)) {
+      rotateRight(dt);
+    }
+
+    if (MovementUtils.isClutching(hud.clutchButton.isTapping)) impulse(dt);
 
     decreaseSpeed(dt);
   }

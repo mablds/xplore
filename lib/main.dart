@@ -1,48 +1,38 @@
-import 'dart:math';
-
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
-import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:xplore/hud/direction_pad.dart';
-import 'package:xplore/hud/clutch.dart';
-import 'package:xplore/utils/positions.dart';
 
-import 'player/entities/spaceship.dart';
-import 'player/utils/effects.dart';
-import 'utils/sizes.dart';
+import 'hud/hud.dart';
+import 'player/spaceship/spaceship.dart';
+import 'constants/positions.dart';
+import 'world/components/repeating_background.dart';
 
-void main() {
-  runApp(GameWidget(game: Xplore()));
-}
+void main() => runApp(GameWidget(game: Xplore()));
 
-class Xplore extends FlameGame with PanDetector {
-  late DirectionalPad directionalPad;
+class Xplore extends FlameGame {
+  late Hud hud;
   late Spaceship spaceship;
-  late ClutchButton clutchButton;
+  late RepeatingBackground background;
 
   @override
   Future<void> onLoad() async {
-    directionalPad = DirectionalPad();
-    clutchButton = ClutchButton();
-    spaceship = Spaceship(
-      clutch: clutchButton,
-      left: directionalPad.leftDirectionalButton,
-      right: directionalPad.rightDirectionalButton,
-    );
+    hud = Hud()
+      ..size = size
+      ..position = Vector2.zero();
+    spaceship = Spaceship(hud: hud)
+      ..position = PositionsUtils.spaceshipInitialPosition(size);
 
-    add(spaceship..position = PositionsUtils.spaceshipInitialPosition(size));
+    final backgroundSprite = await Sprite.load('stars1.png');
+    background = RepeatingBackground(sprite: backgroundSprite, size: size * 3);
 
-    add(directionalPad.leftDirectionalButton
-      ..position = PositionsUtils.leftDirectionalPadPosition(size)
-      ..size = SizesUtils.directionalPadButtonsSize);
-    add(directionalPad.rightDirectionalButton
-      ..position = PositionsUtils.rightDirectionalPadPosition(size)
-      ..size = SizesUtils.directionalPadButtonsSize);
-    add(clutchButton
-      ..position = PositionsUtils.clutchButtonPosition(size)
-      ..size = SizesUtils.clutchButtonSize);
+    camera = CameraComponent(world: world)
+      ..viewfinder.visibleGameSize = Vector2.zero()
+      ..viewfinder.anchor = Anchor.center
+      ..viewfinder.position = Vector2.zero()
+      ..viewport.position = size
+      ..follow(spaceship);
+
+    addAll([world, background, hud, spaceship, camera]);
 
     await super.onLoad();
   }
