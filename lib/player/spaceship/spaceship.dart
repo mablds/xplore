@@ -9,9 +9,11 @@ import 'effects.dart';
 class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
   Spaceship({
     required this.hud,
+    required this.camera,
   });
 
   final Hud hud;
+  final CameraComponent camera;
 
   final double rotateSpeed = 1.0;
   final Vector2 moveDirection = Vector2.zero();
@@ -52,6 +54,7 @@ class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
     add(EffectsUtils.getRocketEffect(position.clone()));
 
     position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
+    camera.viewfinder.position = position.clone();
   }
 
   void decreaseSpeed(double dt) {
@@ -60,6 +63,7 @@ class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
     if (acceleration < 0) acceleration = 0;
 
     position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
+    camera.viewfinder.position = position.clone();
   }
 
   void setMoveDirection(Vector2 newDirection) =>
