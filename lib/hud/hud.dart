@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:xplore/main.dart';
 
 import 'components/button.dart';
 import '../constants/positions.dart';

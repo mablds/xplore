@@ -18,26 +18,19 @@ class Xplore extends FlameGame {
   Future<void> onLoad() async {
     camera = CameraComponent(world: world);
 
-    hud = Hud()
-      ..size = size
-      ..position = Vector2.zero();
-    spaceship = Spaceship(hud: hud, camera: camera)
+    hud = Hud()..size = size;
+
+    spaceship = Spaceship(hud: hud)
       ..position = PositionsUtils.spaceshipInitialPosition(size);
 
     camera
       ..viewfinder.anchor = Anchor.center
-      ..viewport.position = spaceship.position.clone();
+      ..viewport.add(hud)
+      ..follow(spaceship);
 
-    final backgroundSprite = await Sprite.load('stars1.png');
-    background = RepeatingBackground(sprite: backgroundSprite, size: size * 3);
+    background = RepeatingBackground();
 
-    final circle = CircleComponent(
-      radius: 50,
-      paint: Paint()..color = Colors.white,
-      position: Vector2(-60, 60),
-    );
-
-    addAll([world, camera, background, hud, spaceship, circle]);
+    world.addAll([spaceship, background]);
 
     await super.onLoad();
   }

@@ -2,17 +2,44 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 
 class RepeatingBackground extends SpriteComponent {
-  RepeatingBackground({
-    required Sprite sprite,
-    required Vector2 size,
-  }) : super(sprite: sprite, size: size);
+  @override
+  Future<void> onLoad() async {
+    sprite = await Sprite.load('stars1.png');
+  }
 
   @override
   void render(Canvas canvas) {
-    super.render(canvas);
-    for (double x = 0; x < size.x; x += sprite!.srcSize.x) {
-      for (double y = 0; y < size.y; y += sprite!.srcSize.y) {
-        sprite!.render(canvas, position: Vector2(x, y));
+    final spriteSize = sprite!.originalSize * 2;
+    final canvasSize = size;
+    final startX = -((canvasSize.x / spriteSize.x).ceil() * spriteSize.x);
+    final startY = -((canvasSize.y / spriteSize.y).ceil() * spriteSize.y);
+    final endX = canvasSize.x + spriteSize.x;
+    final endY = canvasSize.y + spriteSize.y;
+
+    for (double x = startX; x < endX; x += spriteSize.x) {
+      for (double y = startY; y < endY; y += spriteSize.y) {
+        sprite!.render(
+          canvas,
+          position: Vector2(x, y),
+          size: spriteSize,
+        );
+        sprite!.render(
+          canvas,
+          position: Vector2(x, y + spriteSize.y),
+          size: spriteSize,
+        );
+      }
+      for (double y = startY; y < endY; y += spriteSize.y) {
+        sprite!.render(
+          canvas,
+          position: Vector2(x + spriteSize.x / 2, y),
+          size: spriteSize,
+        );
+        sprite!.render(
+          canvas,
+          position: Vector2(x + spriteSize.x / 2, y + spriteSize.y),
+          size: spriteSize,
+        );
       }
     }
   }
