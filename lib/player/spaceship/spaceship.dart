@@ -7,25 +7,27 @@ import '../utils/direction.dart';
 import 'effects.dart';
 
 class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
-  Spaceship({
-    required this.hud,
-  });
+  Spaceship({required this.hud});
 
   final Hud hud;
 
   final double rotateSpeed = 1.0;
   final Vector2 moveDirection = Vector2.zero();
+  final Vector2 lastImpulseDirection = Vector2.zero();
   double acceleration = 0;
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('ship.png');
+    sprite = await Sprite.load('spaceships/tiny_ship21.png');
     size = Vector2.all(30);
   }
 
   @override
   void update(double dt) {
     move(dt);
+
+    // position.x = position.x.clamp(0, gameRef.background.size.x - size.x);
+    // position.y = position.y.clamp(0, gameRef.background.size.y - size.y);
 
     super.update(dt);
   }
@@ -49,27 +51,29 @@ class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
     if (acceleration > 0 && acceleration < 95) acceleration += 0.5;
     if (acceleration >= 95) acceleration = 100;
 
-    add(EffectsUtils.getRocketEffect(position.clone()));
+    final spaceshipDirection = DirectionUtils.getForwardDirection(angle);
+    setMoveDirection(spaceshipDirection);
 
-    position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
-    // camera.viewfinder.position = position.clone();
+    add(EffectsUtils.getRocketEffect(position.clone()));
+    position += spaceshipDirection * acceleration * dt;
   }
 
   void decreaseSpeed(double dt) {
     if (acceleration > 1) acceleration -= 0.06;
     if (acceleration > 0 && acceleration < 1) acceleration -= 0.03;
-    if (acceleration < 0) acceleration = 0;
+    if (acceleration < 0 || acceleration == 0) acceleration = 0;
 
-    position += DirectionUtils.getForwardDirection(angle) * acceleration * dt;
-    // camera.viewfinder.position = position.clone();
+    position += lastImpulseDirection * acceleration * dt;
   }
 
   void setMoveDirection(Vector2 newDirection) =>
       moveDirection.setFrom(newDirection);
 
+  void setLastImpulseDirection(Vector2 newDirection) =>
+      lastImpulseDirection.setFrom(newDirection);
+
   void rotateLeft(double dt) => setAngle(angle - (rotateSpeed * dt));
   void rotateRight(double dt) => setAngle(angle + (rotateSpeed * dt));
 
   void setAngle(double newAngle) => angle = newAngle;
-  void turnOff() => setMoveDirection(Vector2.zero());
 }
