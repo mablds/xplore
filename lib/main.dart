@@ -1,12 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flame/parallax.dart';
+import 'package:xplore/hud/components/coordinates.dart';
 
 import 'hud/hud.dart';
 import 'player/spaceship/spaceship.dart';
 import 'constants/positions.dart';
-import 'world/components/parallax.dart';
+import 'parallax/parallax.dart';
 
 void main() => runApp(GameWidget(game: Xplore()));
 
@@ -21,9 +21,10 @@ class Xplore extends FlameGame {
     parallax = ParallaxBackground();
     hud = Hud()..size = size;
 
-    spaceship = Spaceship(
-      hud: hud,
-    )..position = PositionsUtils.spaceshipInitialPosition(size);
+    spaceship = Spaceship(hud: hud)
+      ..position = PositionsUtils.spaceshipInitialPosition(size);
+
+    hud.add(CoordinatesDisplay());
 
     camera
       ..viewfinder.anchor = Anchor.center
@@ -34,6 +35,10 @@ class Xplore extends FlameGame {
 
     world.addAll([
       spaceship,
+      SpriteComponent()
+        ..sprite = await Sprite.load('planets/planet2.png')
+        ..position = Vector2(300.0, 400.0)
+        ..size = Vector2(100.0, 100.0),
     ]);
 
     await super.onLoad();

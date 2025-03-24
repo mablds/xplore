@@ -19,6 +19,7 @@ class Spaceship extends SpriteComponent with HasGameRef<Xplore> {
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('spaceships/tiny_ship21.png');
+    anchor = Anchor.bottomCenter;
     size = Vector2.all(30);
   }
 
